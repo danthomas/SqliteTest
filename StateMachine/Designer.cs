@@ -32,14 +32,26 @@ namespace StateMachine
             {
                 _parser.Parse(richTextBox1.Text);
 
-                richTextBox2.Text = "";
+                richTextBox2.Text = String.Join("", _parser.Tokens.Select(item => item.Text));
 
+                int start = 0;
                 foreach (Token token in _parser.Tokens)
                 {
-                    int i = richTextBox2.Text.Length;
-                    richTextBox2.Text += token.Text;
-                    richTextBox2.Select(i, token.Text.Length);
-                    richTextBox2.SelectionBackColor = token.TokenType == TokenType.Text ? Color.White : Color.LightSkyBlue;
+                    richTextBox2.SelectionStart = start;
+                    richTextBox2.SelectionLength = token.Text.Length;
+                    if (token.TokenType == TokenType.Text)
+                    {
+                        richTextBox2.SelectionBackColor = Color.LightYellow;
+                    }
+                    else if (token.TokenType == TokenType.Statement)
+                    {
+                        richTextBox2.SelectionBackColor = Color.LightSkyBlue;
+                    }
+                    else if (token.TokenType == TokenType.Block)
+                    {
+                        richTextBox2.SelectionBackColor = Color.LightSalmon;
+                    }
+                    start += token.Text.Length;
                 }
             }
         }

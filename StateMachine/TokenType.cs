@@ -3,6 +3,7 @@
     public enum TokenType
     {
         Text,
-        Statement
+        Statement,
+        Block
     }
 }

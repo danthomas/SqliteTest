@@ -33,57 +33,57 @@ ForEachProperty((p, f) => |(f ? """","", "")|p.Type() |p.Name.CamelCase());
             parser.Initialise("abc|def|ghi");
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('a'));
+            Assert.That(parser.CurrChar, Is.EqualTo('a'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Text));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("a"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('b'));
+            Assert.That(parser.CurrChar, Is.EqualTo('b'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Text));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("ab"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('c'));
+            Assert.That(parser.CurrChar, Is.EqualTo('c'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Text));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("abc"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('|'));
+            Assert.That(parser.CurrChar, Is.EqualTo('|'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo(""));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('d'));
+            Assert.That(parser.CurrChar, Is.EqualTo('d'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("d"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('e'));
+            Assert.That(parser.CurrChar, Is.EqualTo('e'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("de"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('f'));
+            Assert.That(parser.CurrChar, Is.EqualTo('f'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("def"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('|'));
+            Assert.That(parser.CurrChar, Is.EqualTo('|'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo(""));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('g'));
+            Assert.That(parser.CurrChar, Is.EqualTo('g'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("g"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('h'));
+            Assert.That(parser.CurrChar, Is.EqualTo('h'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("gh"));
 
             parser.Step();
-            Assert.That(parser.Curr, Is.EqualTo('i'));
+            Assert.That(parser.CurrChar, Is.EqualTo('i'));
             Assert.That(parser.CurrToken.TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.CurrToken.Text, Is.EqualTo("ghi"));
 
@@ -161,7 +161,6 @@ ForEachProperty((p, f) => |(f ? """","", "")|p.Type() |p.Name.CamelCase());
             Assert.That(parser.Tokens[1].Text, Is.EqualTo("Entity.Name"));
         }
 
-
         [Test]
         public void StatementsCanHaveParens()
         {
@@ -178,7 +177,25 @@ ForEachProperty((p, f) => |(f ? """","", "")|p.Type() |p.Name.CamelCase());
             Assert.That(parser.Tokens[1].Text, Is.EqualTo("Name()"));
         }
 
+        [Test]
+        public void StatementsCanBeEnclosedInBraces()
+        {
+            Parser parser = new Parser();
 
+            parser.Parse("public class |(Name)Repository");
+
+            Assert.That(parser.Tokens.Count, Is.EqualTo(3));
+
+            Assert.That(parser.Tokens[0].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[0].Text, Is.EqualTo("public class "));
+
+            Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Statement));
+            Assert.That(parser.Tokens[1].Text, Is.EqualTo("(Name)"));
+
+            Assert.That(parser.Tokens[2].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[2].Text, Is.EqualTo("Repository"));
+        }
+        
         [Test]
         public void StatementsCanHaveWhitespaceInParens()
         {
@@ -194,7 +211,6 @@ ForEachProperty((p, f) => |(f ? """","", "")|p.Type() |p.Name.CamelCase());
             Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Statement));
             Assert.That(parser.Tokens[1].Text, Is.EqualTo("(f ? \"\" : \", \")"));
         }
-
 
         [Test]
         public void StatementsCanHaveNestedParens()
@@ -212,5 +228,23 @@ ForEachProperty((p, f) => |(f ? """","", "")|p.Type() |p.Name.CamelCase());
             Assert.That(parser.Tokens[1].Text, Is.EqualTo("Name(Consts.Temp())"));
         }
 
+        [Test]
+        public void BlocksAreEnclosedByDelimiterAndCurlyBrace()
+        {
+            Parser parser = new Parser();
+
+            parser.Parse("text1|{block}text2");
+
+            Assert.That(parser.Tokens.Count, Is.EqualTo(3));
+
+            Assert.That(parser.Tokens[0].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[0].Text, Is.EqualTo("text1"));
+
+            Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Block));
+            Assert.That(parser.Tokens[1].Text, Is.EqualTo("{block}"));
+
+            Assert.That(parser.Tokens[2].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[2].Text, Is.EqualTo("text2"));
+        }
     }
 }
