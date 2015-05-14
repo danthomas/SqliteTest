@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlLiteTest", "SqlLiteTest\SqlLiteTest.csproj", "{63DD5265-D67D-4667-AA7D-F6E08F7822AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachine", "StateMachine\StateMachine.csproj", "{FE0009B3-FC00-4517-AA4B-9C51718FEF5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{63DD5265-D67D-4667-AA7D-F6E08F7822AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63DD5265-D67D-4667-AA7D-F6E08F7822AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63DD5265-D67D-4667-AA7D-F6E08F7822AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE0009B3-FC00-4517-AA4B-9C51718FEF5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE0009B3-FC00-4517-AA4B-9C51718FEF5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE0009B3-FC00-4517-AA4B-9C51718FEF5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE0009B3-FC00-4517-AA4B-9C51718FEF5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
