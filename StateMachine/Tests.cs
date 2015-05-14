@@ -144,5 +144,73 @@ ForEachProperty((p, f) => |(f ? """","", "")|p.Type() |p.Name.CamelCase());
             Assert.That(parser.Tokens[2].Text, Is.EqualTo(" : IEntity"));
         }
 
+
+        [Test]
+        public void StatementsCanHaveDots()
+        {
+            Parser parser = new Parser();
+
+            parser.Parse("public class |Entity.Name");
+
+            Assert.That(parser.Tokens.Count, Is.EqualTo(2));
+
+            Assert.That(parser.Tokens[0].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[0].Text, Is.EqualTo("public class "));
+
+            Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Statement));
+            Assert.That(parser.Tokens[1].Text, Is.EqualTo("Entity.Name"));
+        }
+
+
+        [Test]
+        public void StatementsCanHaveParens()
+        {
+            Parser parser = new Parser();
+
+            parser.Parse("public class |Name()");
+
+            Assert.That(parser.Tokens.Count, Is.EqualTo(2));
+
+            Assert.That(parser.Tokens[0].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[0].Text, Is.EqualTo("public class "));
+
+            Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Statement));
+            Assert.That(parser.Tokens[1].Text, Is.EqualTo("Name()"));
+        }
+
+
+        [Test]
+        public void StatementsCanHaveWhitespaceInParens()
+        {
+            Parser parser = new Parser();
+
+            parser.Parse("public class |(f ? \"\" : \", \")");
+
+            Assert.That(parser.Tokens.Count, Is.EqualTo(2));
+
+            Assert.That(parser.Tokens[0].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[0].Text, Is.EqualTo("public class "));
+
+            Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Statement));
+            Assert.That(parser.Tokens[1].Text, Is.EqualTo("(f ? \"\" : \", \")"));
+        }
+
+
+        [Test]
+        public void StatementsCanHaveNestedParens()
+        {
+            Parser parser = new Parser();
+
+            parser.Parse("public class |Name(Consts.Temp())");
+
+            Assert.That(parser.Tokens.Count, Is.EqualTo(2));
+
+            Assert.That(parser.Tokens[0].TokenType, Is.EqualTo(TokenType.Text));
+            Assert.That(parser.Tokens[0].Text, Is.EqualTo("public class "));
+
+            Assert.That(parser.Tokens[1].TokenType, Is.EqualTo(TokenType.Statement));
+            Assert.That(parser.Tokens[1].Text, Is.EqualTo("Name(Consts.Temp())"));
+        }
+
     }
 }

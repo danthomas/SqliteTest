@@ -16,28 +16,39 @@ namespace StateMachine
         {
             //Rules
             var isDelimiter = new Rule(p => p.Curr == '|');
+            var isLParen = new Rule(p => p.Curr == '(');
+            var isRParen = new Rule(p => p.Curr == ')');
+            var isDot = new Rule(p => p.Curr == '.');
             var stateIsText = new Rule(p => p.TokenType == TokenType.Text);
             var stateIsStatement = new Rule(p => p.TokenType == TokenType.Statement);
-            var isLegalStatementChar = new Rule(p => Char.IsLetter(p.Curr));
-            var isNotLegalStatementChar = new Rule(p => !Char.IsLetter(p.Curr));
+            var currIsLetter = new Rule(p => Char.IsLetter(p.Curr));
+            var currIsNotLetter = new Rule(p => !Char.IsLetter(p.Curr));
+            var parentCountIsNonZero = new Rule(p => p.ParenCount != 0);
 
             //Actions
             var appendChar = new Action<Parser>(p => p.CurrToken.Text += p.Curr);
             var newText = new Action<Parser>(p => p.NewToken(TokenType.Text));
             var newStatement = new Action<Parser>(p => p.NewToken(TokenType.Statement));
+            var incrementParenCount = new Action<Parser>(p => p.ParenCount++);
+            var decrementParenCount = new Action<Parser>(p => p.ParenCount--);
 
 
             When(stateIsText).And(isDelimiter).Then(newStatement);
-            When(stateIsStatement).And(isDelimiter).Then(newStatement);
-
-            When(stateIsStatement).And(isLegalStatementChar).Then(appendChar);
-            When(stateIsStatement).And(isNotLegalStatementChar).Then(newText).And(appendChar);
-
-            When(stateIsStatement).Then(appendChar);
             When(stateIsText).Then(appendChar);
+
+
+            When(stateIsStatement).And(parentCountIsNonZero).Then(appendChar);
+            When(stateIsStatement).And(isDelimiter).Then(newStatement);
+            When(stateIsStatement).And(isLParen).Then(appendChar).And(incrementParenCount);
+            When(stateIsStatement).And(isRParen).And(parentCountIsNonZero).Then(appendChar).And(decrementParenCount);
+            When(stateIsStatement).And(isDot).Then(appendChar);
+            When(stateIsStatement).And(currIsLetter).Then(appendChar);
+            When(stateIsStatement).And(currIsNotLetter).Then(newText).And(appendChar);
+
+            //When(stateIsStatement).Then(appendChar);
         }
 
-
+        public int ParenCount { get; set; }
         public char Curr { get { return _curr; } }
         public char Prev { get { return _prev; } }
         public TokenType TokenType { get { return Tokens.Last().TokenType; } }
